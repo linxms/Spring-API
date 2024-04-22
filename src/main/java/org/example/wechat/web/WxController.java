@@ -27,6 +27,8 @@ import java.util.*;
 @XStreamAlias("xml")
 @RestController
 public class WxController {
+
+    int state = 0;
     Message message = new Message();
     @GetMapping("/")
     public String check(String signature,String timestamp,String nonce,String echostr) {
