@@ -2,13 +2,10 @@ package org.example.wechat.commonIO;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import lombok.Getter;
-import lombok.Setter;
-import org.example.wechat.Util.WordUtil;
-import org.example.wechat.web.WxController;
-import jdk.jfr.DataAmount;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 
@@ -56,15 +53,12 @@ public class Message<T> {
 
     public String TextMsgReturn(Map<String, String> map){
 
-//        String toUserName = map.get("FromUserName");
-//        String fromUserName = map.get("ToUserName");
-//        String msgType = map.get("MsgType");
-//        long createTime = System.currentTimeMillis()/1000;
-//        String content = "欢迎关注本公众号";
-
-
         Message textMessage = new Message();
-        textMessage.setContent("您好，欢迎关注本公众号！");
+        textMessage.setContent("您好，欢迎关注本公众号！" + "\n" +
+                "如要插入Offer/User，请输入: 插入岗位/创建用户 公司名 岗位 薪水 岗位数量" + "\n" +
+                "如要删除Offer/User，请输入: 删除岗位/用户 公司名 岗位 薪水 岗位数量" + "\n" +
+                "如要修改Offer/User，请输入: 修改岗位/用户 公司名 岗位 薪水 岗位数量" + "\n" +
+                "如要查询Offer，请输入: 查询 公司名 页码 页面数据大小");
         textMessage.setCreateTime(System.currentTimeMillis()/1000);
         textMessage.setFromUserName(map.get("ToUserName"));
         textMessage.setToUserName(map.get("FromUserName"));
@@ -78,18 +72,38 @@ public class Message<T> {
         return xml;
     }
 
+    public String ActionMsgReturn(int state, Map<String, String> map){
+        Message actMessage = new Message();
+        actMessage.setCreateTime(System.currentTimeMillis()/1000);
+        actMessage.setFromUserName(map.get("ToUserName"));
+        actMessage.setToUserName(map.get("FromUserName"));
+        actMessage.setMsgType(map.get("MsgType"));
 
-    public String WordMsgReturn(Map<String, String> map){
+        switch (state){
+            case 1:
+                actMessage.setContent("插入成功！");
+                break;
+            case 2:
+                actMessage.setContent("删除成功");
+                break;
+            case 3:
+                actMessage.setContent("修改成功");
+                break;
+            default:
+        }
+        //System.out.println(textMessage.toString());
+        // XStream将java对象转化为xml字符串
+        XStream xStream = new XStream();
+        xStream.processAnnotations(Message.class);
+        String xml = xStream.toXML(actMessage);
 
-//        String toUserName = map.get("FromUserName");
-//        String fromUserName = map.get("ToUserName");
-//        String msgType = map.get("MsgType");
-//        long createTime = System.currentTimeMillis()/1000;
-//        String content = "欢迎关注本公众号";
+        return xml;
+    }
 
+    public String findPageMsg(Map<String, String> map){
 
         Message textMessage = new Message();
-        textMessage.setContent(WordUtil.getWord(map.get("Content")));
+        textMessage.setContent(map.get("Content"));
         textMessage.setCreateTime(System.currentTimeMillis()/1000);
         textMessage.setFromUserName(map.get("ToUserName"));
         textMessage.setToUserName(map.get("FromUserName"));
@@ -103,7 +117,24 @@ public class Message<T> {
         return xml;
     }
 
+    public String failMsgReturn(Map<String, String> map){
+        Message failMessage = new Message();
+        failMessage.setCreateTime(System.currentTimeMillis()/1000);
+        failMessage.setFromUserName(map.get("ToUserName"));
+        failMessage.setToUserName(map.get("FromUserName"));
+        failMessage.setMsgType(map.get("MsgType"));
+        failMessage.setContent("本次操作失败，请重新输入");
 
+        //System.out.println(textMessage.toString());
+        // XStream将java对象转化为xml字符串
+        XStream xStream = new XStream();
+        xStream.processAnnotations(Message.class);
+        String xml = xStream.toXML(failMessage);
+
+        return xml;
+
+
+    }
 }
 
 /*

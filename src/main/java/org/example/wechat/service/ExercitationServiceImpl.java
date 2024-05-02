@@ -1,13 +1,18 @@
 package org.example.wechat.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.example.wechat.entity.Exercitation;
 import org.example.wechat.mapper.ExercitationMapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.springframework.stereotype.Service;
 
+import java.util.Map;
 
+@Service
 public class ExercitationServiceImpl extends ServiceImpl<ExercitationMapper, Exercitation> implements ExercitationService{
 
     public ExercitationServiceImpl(ExercitationMapper exercitationMapper){
@@ -31,15 +36,10 @@ public class ExercitationServiceImpl extends ServiceImpl<ExercitationMapper, Exe
     }
 
     @Override
-    public boolean deleExercitation(Exercitation exercitation) throws RuntimeException {
-//        String work_name = exercitation.getWork_name();
-//        String company = exercitation.getCompany();
-//
-//        Map<String, Object> deleMap = new HashMap<>();
-//        deleMap.put("company", company);
-//        deleMap.put("work_name", work_name);
+    public boolean deleExercitation(Map<String, Object> map) throws RuntimeException {
+
         try {
-            int result = this.baseMapper.deleteById(exercitation);
+            int result = this.baseMapper.deleteByMap(map);
 
             if (result < 1) {
                 throw new RuntimeException("删除错误");
@@ -54,7 +54,10 @@ public class ExercitationServiceImpl extends ServiceImpl<ExercitationMapper, Exe
     public boolean updateExercitation(Exercitation exercitation) throws RuntimeException {
 
         try {
-            int result =this.baseMapper.updateById(exercitation);
+            int findId = this.baseMapper.getWorkId(exercitation.getCompany(), exercitation.getWork_name());
+            UpdateWrapper<Exercitation> updateWrapper = Wrappers.update();
+            updateWrapper.eq("id", findId);
+            int result = this.baseMapper.update(exercitation, updateWrapper);
             if (result < 1){
                 throw new RuntimeException("更新异常");
             }

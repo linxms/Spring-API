@@ -1,8 +1,7 @@
 package org.example.wechat.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
 
 @Data
 public class Exercitation {
@@ -16,5 +15,19 @@ public class Exercitation {
         this.work_name = work_name;
         this.salary = salary;
         this.work_quantity = work_quantity;
+    }
+
+    public Exercitation(String company){
+        this.company = company;
+    }
+
+    @Override
+    public String toString() {
+        return "Exercitation{" +
+                "company='" + company + '\'' +
+                ", work_name='" + work_name + '\'' +
+                ", salary=" + salary +
+                ", work_quantity=" + work_quantity +
+                '}';
     }
 }
